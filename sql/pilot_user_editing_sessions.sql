@@ -10,7 +10,7 @@ SELECT
   IF(SUM(event_action = 'abort') > 0,
     IF(SUM(`event_action.abort.type` = 'nochange') > 0,
       'abort_nochange',
-    IF(SUM(`event_action.abort.type` IN ('siwtchwith', 'switchwithout')) > 0,
+    IF(SUM(`event_action.abort.type` IN ('switchwith', 'switchwithout')) > 0,
       'switch_editors',
       'abort'
     )),
