@@ -14,4 +14,9 @@ INNER JOIN staging.ve2_pilot_users USING (user_id)
 WHERE
   log_type = "block" AND
   log_action = "block" AND
-  log_timestamp BETWEEN "2015052115" and "2015052215";
+  log_timestamp BETWEEN
+    registration AND
+    DATE_FORMAT(
+      DATE_ADD(registration, INTERVAL 7 DAY),
+      "%Y%m%d%H%M%S"
+    );

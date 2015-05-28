@@ -23,5 +23,11 @@ FROM staging.ve2_pilot_users
 INNER JOIN log.Edit_11448630 ON
   wiki = 'enwiki' AND
   user_id = `event_user.id`
-WHERE timestamp BETWEEN "2015052115" and "2015052215"
+WHERE
+  timestamp BETWEEN
+    registration AND
+    DATE_FORMAT(
+      DATE_ADD(registration, INTERVAL 7 DAY),
+      "%Y%m%d%H%M%S"
+    )
 GROUP BY user_id, session_id;
