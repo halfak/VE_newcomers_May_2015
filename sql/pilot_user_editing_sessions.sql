@@ -24,6 +24,7 @@ INNER JOIN log.Edit_11448630 ON
   wiki = 'enwiki' AND
   user_id = `event_user.id`
 WHERE
+  timestamp BETWEEN "2015052115" and "2015052915" AND
   timestamp BETWEEN
     registration AND
     DATE_FORMAT(
