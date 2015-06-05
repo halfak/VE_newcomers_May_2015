@@ -1,8 +1,11 @@
 source("loader/pilot_users.R")
+source("loader/pilot_user_metrics.R")
 source("loader/pilot_user_editing_sessions.R")
 
+library(plyr)
 
 users = load.pilot_users(reload=T)
+metrics = load.pilot_user_metrics(reload=T)
 edit_sessions = load.pilot_user_editing_sessions(reload=T)
 
 ve_sessions = nrow(edit_sessions[editor == "visualeditor"])
@@ -60,8 +63,26 @@ first_5_sessions[,
         attempted.p = sum(outcome == "success" | !is.na(first_attempt))/length(session_id),
         successful.k = sum(outcome == "success"),
         successful.p = sum(outcome == "success")/length(session_id),
+        changed_and_noswitch.n = sum(outcome != "abort_nochange" & outcome != "switch_editors"),
         changed.n = sum(outcome != "abort_nochange"),
         n = length(session_id)
+    ),
+    list(bucket, via_mobile)
+]
+
+
+user_session_count = resampled_edit_sessions[,
+    list(editing_sessions = length(session_id)),
+    user_id
+]
+merge(
+    users,
+    merge(metrics, user_session_count, by="user_id", all=T),
+    by="user_id"
+)[,
+    list(
+        has_editing_sessions.k = sum(!is.na(editing_sessions) | day_revisions > 0),
+        editing.n = sum(day_revisions > 0)
     ),
     list(bucket, via_mobile)
 ]
