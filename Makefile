@@ -34,3 +34,9 @@ datasets/pilot_user_editing_sessions.tsv: \
 	cat sql/pilot_user_editing_sessions.sql | \
 	mysql $(dbstore) > \
 	datasets/pilot_user_editing_sessions.tsv
+
+datasets/experimental_users.tsv: sql/experimental_users.sql
+	cat sql/experimental_users.sql | \
+	mysql $(dbstore) > \
+	datasets/experimental_users.tsv
+
