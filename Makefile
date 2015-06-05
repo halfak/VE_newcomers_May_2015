@@ -1,10 +1,47 @@
 dbstore = --defaults-file=~/.my.research.cnf --host analytics-store.eqiad.wmnet -u research
 
-datasets/pilot_users.tsv: sql/pilot_users.sql
-	cat sql/pilot_users.sql | \
+################################### Experiment #################################
+datasets/experimental_users.tsv: sql/experimental_users.sql
+	cat sql/experimental_users.sql | \
 	mysql $(dbstore) > \
-	datasets/pilot_users.tsv
+	datasets/experimental_users.tsv
 
+datasets/experimental_users.loaded: \
+		datasets/experimental_users.tsv \
+		sql/experimental_users.create.sql
+	cat sql/experimental_users.create.sql | \
+	mysql $(dbstore) staging && \
+	ln -sf experimental_users.tsv datasets/ve2_experimental_users && \
+	mysqlimport $(dbstore) --local --ignore-lines=1 staging datasets/ve2_experimental_users; \
+	rm -f experimental_users.tsv datasets/ve2_experimental_users; \
+	mysql $(dbstore) -e "SELECT NOW(), COUNT(*) FROM staging.ve2_experimental_users" > \
+	datasets/experimental_users.loaded
+
+datasets/experimental_user_metrics.tsv: datasets/experimental_users.tsv
+	cat datasets/experimental_users.tsv | \
+	mwmetrics new_users enwiki $(dbstore) > \
+	datasets/experimental_user_metrics.tsv
+
+datasets/experimental_user_blocks.tsv: \
+		datasets/experimental_users.loaded \
+		sql/experimental_user_blocks.sql
+	cat sql/experimental_user_blocks.sql | \
+	mysql $(dbstore) > \
+	datasets/experimental_user_blocks.tsv
+
+datasets/experimental_user_editing_sessions.tsv: \
+		datasets/experimental_users.loaded \
+		sql/experimental_user_editing_sessions.sql
+	cat sql/experimental_user_editing_sessions.sql | \
+	mysql $(dbstore) > \
+	datasets/experimental_user_editing_sessions.tsv
+
+datasets/experimental_users.tsv: sql/experimental_users.sql
+	cat sql/experimental_users.sql | \
+	mysql $(dbstore) > \
+	datasets/experimental_users.tsv
+
+############################ Pilot #############################################
 datasets/pilot_users.loaded: \
 		datasets/pilot_users.tsv \
 		sql/pilot_users.create.sql
@@ -34,9 +71,3 @@ datasets/pilot_user_editing_sessions.tsv: \
 	cat sql/pilot_user_editing_sessions.sql | \
 	mysql $(dbstore) > \
 	datasets/pilot_user_editing_sessions.tsv
-
-datasets/experimental_users.tsv: sql/experimental_users.sql
-	cat sql/experimental_users.sql | \
-	mysql $(dbstore) > \
-	datasets/experimental_users.tsv
-
