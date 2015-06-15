@@ -20,11 +20,11 @@ data_loader = function(load, ident, cleanup=function(x){x}){
 tsv_loader = function(filename, ident, cleanup=function(x){x}){
 	data_loader(
 		function(verbose=T, reload=F){
-			if(verbose){cat("Loading ", filename, "...")} 
+			if(verbose){cat("Loading ", filename, "...")}
 			d = read.table(
-				filename, 
-				header=T, sep="\t", 
-				quote="", comment.char="", 
+				filename,
+				header=T, sep="\t",
+				quote="", comment.char="",
 				na.strings="NULL"
 			)
 			d = data.table(d)
@@ -38,7 +38,7 @@ tsv_loader = function(filename, ident, cleanup=function(x){x}){
 
 prop.se = function(k, n){
 	prop = k/n
-	
+
 	sqrt(prop*(1-prop)/n)
 }
 
@@ -100,7 +100,7 @@ clean.monthly_creations = function(dt){
 					as.character(experience)
 				}
 			},
-			dt$experience, 
+			dt$experience,
 			dt$account_type
 		),
 		levels=c("anon", "autocreate", "day", "week", "month", "oldtimer")
@@ -108,4 +108,48 @@ clean.monthly_creations = function(dt){
 	dt
 }
 
+if.na = function(values, then){
+	sapply(
+		values,
+		function(value){
+			if(is.na(value)){
+				then
+			}else{
+				value
+			}
+		}
+	)
+}
 
+if.then = function(conditions, then, otherwise){
+	sapply(
+		conditions,
+		function(condition){
+			if(condition){
+				then
+			}else{
+				otherwise
+			}
+		}
+	)
+}
+
+
+wiki.table = function(dt){
+	cat("{|\n")
+	for(name in names(dt)){
+		cat("! ", name, "\n")
+	}
+
+	for(row in 1:dim(dt)[1]){
+		row = c(as.matrix(dt[row]))
+		cat("|-\n")
+		cat("|", row[1])
+		for(val in row[2:length(row)]){
+			cat(" || ", val)
+		}
+		cat("\n")
+	}
+
+	cat("|}")
+}
