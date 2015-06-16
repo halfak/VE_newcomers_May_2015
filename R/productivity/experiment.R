@@ -76,7 +76,7 @@ with(
 )
 
 
-edit_session = load.experimental_user_editing_sessions(reload=T)
+edit_sessions = load.experimental_user_editing_sessions(reload=T)
 
 user_ve_edits = merge(
     users[,list(user_id),],

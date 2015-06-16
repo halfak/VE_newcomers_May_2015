@@ -38,7 +38,7 @@ user_edit_sessions[bucket=="control",
 first_5_sessions = user_edit_sessions[, j = {.SD[order(session_started),][1:min(5, .N),]}, by=user_id]
 first_5_sessions[,
     list(
-        count = length(user_id)
+        count = length(session_id)
     ),
     list(bucket)
 ]
@@ -49,7 +49,10 @@ bucket_stats = first_5_sessions[via_mobile == 0,
         editor_ve.k = sum(editor == "visualeditor"),
         attempted.k = sum(outcome == "success" | !is.na(first_attempt)),
         successful.k = sum(outcome == "success"),
-        sessions.n = sum(outcome != "abort_nochange" & outcome != "switch_editors")
+        sessions.n = sum(
+            outcome != "abort_nochange" &
+            outcome != "switch_editors"
+        )
     ),
     list(bucket)
 ][,

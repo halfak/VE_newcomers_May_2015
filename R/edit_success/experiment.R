@@ -2,8 +2,6 @@ source("loader/experimental_users.R")
 source("loader/experimental_user_metrics.R")
 source("loader/experimental_user_editing_sessions.R")
 
-library(plyr)
-
 users = load.experimental_users(reload=T)
 metrics = load.experimental_user_metrics(reload=T)
 edit_sessions = load.experimental_user_editing_sessions(reload=T)

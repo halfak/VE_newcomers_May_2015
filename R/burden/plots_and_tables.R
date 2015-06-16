@@ -23,7 +23,7 @@ user_block_metrics = merge(
 
 print(
     with(
-        user_block_metrics[via_mobile == 0,],
+        user_block_metrics[week_revisions > 0 & via_mobile == 0,],
         wilcox.test(
             day_reverted_main_revisions[bucket == "control"],
             day_reverted_main_revisions[bucket == "experimental"]
@@ -32,7 +32,7 @@ print(
 )
 print(
     with(
-        user_block_metrics[via_mobile == 0,],
+        user_block_metrics[week_revisions > 0 & via_mobile == 0,],
         wilcox.test(
             week_reverted_main_revisions[bucket == "control"],
             week_reverted_main_revisions[bucket == "experimental"]
@@ -43,14 +43,22 @@ print(
 bucket_metrics = user_block_metrics[via_mobile == 0,
     list(
         blocked.k = sum(blocked),
-        blocked.p = sum(blocked)/length(user_id),
+        blocked.p = sum(blocked)/sum(week_revisions > 0),
         blocked_for_damage.k = sum(blocked_for_damage),
-        blocked_for_damage.p = sum(blocked_for_damage)/length(user_id),
+        blocked_for_damage.p = sum(blocked_for_damage)/sum(week_revisions > 0),
+        editing.k = sum(week_revisions > 0),
         n = length(user_id)
     ),
     list(bucket)
 ]
 wiki.table(bucket_metrics)
+
+print(
+    with(bucket_metrics, prop.test(blocked.k, editing.k))
+)
+print(
+    with(bucket_metrics, prop.test(blocked_for_damage.k, editing.k))
+)
 
 svg("burden/plots/block_rate.svg", height=5, width=7)
 ggplot(
@@ -79,7 +87,7 @@ ggplot(
         group = reason,
         linetype = reason
     )
-) + 
+) +
 theme_bw() +
 geom_point() +
 geom_errorbar(

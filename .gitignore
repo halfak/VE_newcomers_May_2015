@@ -2,6 +2,9 @@
 datasets/*.tsv
 datasets/*.loaded
 
+# Plots
+*.svg
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

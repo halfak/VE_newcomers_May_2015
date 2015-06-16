@@ -41,6 +41,13 @@ datasets/experimental_users.tsv: sql/experimental_users.sql
 	mysql $(dbstore) > \
 	datasets/experimental_users.tsv
 
+datasets/experimental_user_revision_stats.tsv: \
+		datasets/experimental_users.loaded \
+		sql/experimental_user_revision_stats.sql
+	cat sql/experimental_user_revision_stats.sql | \
+	mysql $(dbstore) > \
+	datasets/experimental_user_revision_stats.tsv
+
 ############################ Pilot #############################################
 datasets/pilot_users.loaded: \
 		datasets/pilot_users.tsv \
