@@ -16,5 +16,5 @@ WHERE
     registration AND
     DATE_FORMAT(
       DATE_ADD(registration, INTERVAL 7 DAY),
-      "%Y%m%d%H%M%S"
+      "%Y%m%d%H%i%S"
     );
